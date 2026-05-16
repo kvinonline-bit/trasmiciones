@@ -30,42 +30,49 @@
         </div>
 
         <div class="controls-container">
-            
-            <div class="banner-selectors">
-                <div class="selector-box">
-                    <label for="uploadBanner1">Banner 1:</label>
-                    <input type="file" id="uploadBanner1" accept="image/png" onchange="cargarBanner(event, 1)">
-                </div>
-                <div class="selector-box">
-                    <label for="uploadBanner2">Banner 2:</label>
-                    <input type="file" id="uploadBanner2" accept="image/png" onchange="cargarBanner(event, 2)">
-                </div>
-            </div>
+    
+    <div class="banner-selectors">
+        <div class="selector-box">
+            <label for="uploadBanner">Multimedia de la Escena:</label>
+            <input type="file" id="uploadBanner" accept="image/png" onchange="cargarBannerEscena(event)">
+        </div>
 
-            <div class="panel-distribucion">
-                
-                <div class="bloque-escenas">
-                    <div class="grid-calculadora">
-                        <button onclick="cambiarPreview('camara_limpia')">E1: Limpia</button>
-                        <button onclick="cambiarPreview('camara_banner_1')">E2: Ban 1</button>
-                        <button onclick="cambiarPreview('camara_banner_2')">E3: Ban 2</button>
-                        <button onclick="cambiarPreview('camara_banner_3')">E4: Vacío</button>
-                        <button onclick="cambiarPreview('camara_banner_4')">E5: Vacío</button>
-                    </div>
-                </div>
-
-                <div class="bloque-transicion">
-                    <button id="btnTransicionVertical" onclick="pasarAEnVivo()">
-                        <span>▲</span>
-                        <span>LIVE</span>
-                        <span>▲</span>
-                    </button>
-                </div>
-
-            </div>
+        <div class="selector-box">
+            <label for="streamUrl">URL / Clave de Transmisión (Facebook):</label>
+            <input type="text" id="streamUrl" placeholder="rtmp://live-api-s.facebook.com:80/rtmp/..." style="background: rgba(0,0,0,0.2); border: 1px solid #444; color: #fff; padding: 2px 5px; border-radius: 4px;">
         </div>
     </div>
 
+    <div class="panel-distribucion">
+        
+        <div class="bloque-escenas">
+            <h4>Escenas de la Iglesia</h4>
+            <div class="grid-calculadora">
+                <button onclick="cambiarPreview('camara_limpia')">E1: Cámara</button>
+                <button onclick="cambiarPreview('escena_2')">E2: Banner</button>
+                <button onclick="cambiarPreview('escena_3')">E3: Versículo</button>
+                <button onclick="cambiarPreview('escena_4')">E4: Anuncios</button>
+                <button onclick="cambiarPreview('escena_5')">E5: Despedida</button>
+            </div>
+        </div>
+
+        <div class="bloque-emision" style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+            <h4 style="font-size: 0.65rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Control de Red</h4>
+            <button id="btnIniciarStream" onclick="conmutarTransmision()" style="flex: 1; background: linear-gradient(135deg, #dc3545, #a71d2a); color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+                <span id="iconoStream">🔴</span> <span id="textoStream">INICIAR EN VIVO</span>
+            </button>
+        </div>
+
+        <div class="bloque-transicion">
+            <button id="btnTransicionVertical" onclick="pasarAEnVivo()">
+                <span>▲</span>
+                <span>CORTE MASTER</span>
+                <span>▲</span>
+            </button>
+        </div>
+
+    </div>
+</div>
     <video id="videoOculto" autoplay playsinline muted style="display:none;"></video>
 
     <script src="app.js"></script>

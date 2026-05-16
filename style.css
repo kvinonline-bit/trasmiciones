@@ -106,12 +106,29 @@ canvas {
 }
 
 /* --- NUEVA DISTRIBUCIÓN LADO A LADO --- */
+/* Asegura que el panel distribuya las 3 secciones horizontalmente en el celular */
 .panel-distribucion {
     display: flex;
     gap: 10px;
+    flex: 1;
     align-items: stretch;
-    flex: 1; /* Hace que los botones utilicen el alto disponible */
-    min-height: 0;
+}
+
+/* Ajuste para que la caja de texto de Facebook no se desparrame */
+.selector-box input[type="text"] {
+    width: 100%;
+    margin-top: 2px;
+    font-size: 0.65rem;
+}
+
+/* Efecto de parpadeo cuando la transmisión esté activa */
+.transmitiendo-animacion {
+    animation: parpadeoRed 1.5s infinite alternate;
+}
+
+@keyframes parpadeoRed {
+    from { background: linear-gradient(135deg, #ff0000, #b30000); box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+    to { background: linear-gradient(135deg, #b30000, #660000); box-shadow: 0 0 2px rgba(255, 0, 0, 0.2); }
 }
 
 /* Bloque Izquierdo: Escenas */
@@ -185,5 +202,4 @@ canvas {
 #btnTransicionVertical:active {
     background: #e68a00;
     transform: scale(0.96);
-}
 }

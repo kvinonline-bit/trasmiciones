@@ -1,42 +1,49 @@
-// 1. Captura de elementos del HTML según la imagen
 const canvasPreview = document.getElementById('canvasPreview');
 const canvasLive = document.getElementById('canvasLive');
 const ctxPreview = canvasPreview.getContext('2d');
 const ctxLive = canvasLive.getContext('2d');
 const videoOculto = document.getElementById('videoOculto');
 
-// 2. Variables de estado del switcher
-let escenaPreview = 'camara_limpia'; // Lo que se está preparando
-let escenaLive = 'camara_limpia';    // Lo que está saliendo al aire
+// Estado de las escenas
+let escenaPreview = 'camara_limpia';
+let escenaLive = 'camara_limpia';
 
-// Objetos para almacenar las imágenes de los banners cargados
-let banner1 = null;
-let banner2 = null;
+// Almacenamiento Dinámico: Cada escena tiene su propia billetera multimedia vacía
+let multimediaEscenas = {
+    'camara_limpia': null,
+    'escena_2': null,
+    'escena_3': null,
+    'escena_4': null,
+    'escena_5': null
+};
 
-// 3. Inicializar la cámara trasera del celular
+// Estado de la transmisión a Facebook
+let transmitiendo = false;
+
 async function iniciarCamara() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
-            video: { 
-                facingMode: "environment", 
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            },
-            audio: false
+            video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: true // Activamos audio para cuando transmita a la iglesia
         });
         videoOculto.srcObject = stream;
-        videoOculto.onloadedmetadata = () => {
-            // Arranca el bucle de renderizado en paralelo para ambos monitores
-            procesarMaster();
-        };
+        videoOculto.onloadedmetadata = () => { procesarMaster(); };
     } catch (error) {
-        console.error("Error al acceder a la cámara: ", error);
-        alert("Camara no disponible o faltan permisos.");
+        console.error("Error de cámara:", error);
     }
 }
 
-// 4. Función para cargar los banners dinámicamente desde los inputs de la imagen
-function cargarBanner(event, numeroBanner) {
+// Cambiar de escena en Preview
+function cambiarPreview(nuevaEscena) {
+    escenaPreview = nuevaEscena;
+    
+    // TRUCO DE USABILIDAD: Cuando cambias de escena, el input de archivos 
+    // se limpia visualmente para que puedas subir uno nuevo si lo deseas.
+    document.getElementById('uploadBanner').value = "";
+}
+
+// Cargar la imagen exclusivamente en la escena que tienes seleccionada en Preview
+function cargarBannerEscena(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -44,58 +51,65 @@ function cargarBanner(event, numeroBanner) {
     reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-            if (numeroBanner === 1) {
-                banner1 = img;
-            } else if (numeroBanner === 2) {
-                banner2 = img;
-            }
+            // Guarda la imagen únicamente en la escena activa de Preview
+            multimediaEscenas[escenaPreview] = img;
         };
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }
 
-// 5. Botones de escena (Cambian solo el PREVIEW verde)
-function cambiarPreview(nuevaEscena) {
-    escenaPreview = nuevaEscena;
-}
-
-// 6. Botón GIGANTE AMARILLO (El corte "LIVE" que pasa Preview a Program)
+// Pasar de Preview a Programa (Corte máster)
 function pasarAEnVivo() {
     escenaLive = escenaPreview;
 }
 
-// 7. El motor gráfico de la aplicación (Dibuja en ambos canvas al mismo tiempo)
+// Función del botón de Transmisión a Facebook
+function conmutarTransmision() {
+    const urlFacebook = document.getElementById('streamUrl').value.trim();
+    const btn = document.getElementById('btnIniciarStream');
+    const texto = document.getElementById('textoStream');
+    const icono = document.getElementById('iconoStream');
+
+    if (!transmitiendo) {
+        if (urlFacebook === "") {
+            alert("Por favor, pega la URL o Clave de transmisión de tu Facebook Live primero.");
+            return;
+        }
+        
+        // Cambiar estado visual a TRANSMITIENDO
+        transmitiendo = true;
+        btn.classList.add('transmitiendo-animacion');
+        texto.innerText = "DETENER TRANSMISIÓN";
+        icono.innerText = "🟩";
+        console.log("Conectando flujo de video con el stream de Facebook...");
+        
+        // AQUÍ CONECTAREMOS EL FLUJO DE STREAMING REAL EN EL SIGUIENTE PASO
+    } else {
+        // Detener transmisión
+        transmitiendo = false;
+        btn.classList.remove('transmitiendo-animacion');
+        texto.innerText = "INICIAR EN VIVO";
+        icono.innerText = "🔴";
+        console.log("Transmisión finalizada.");
+    }
+}
+
+// Bucle de dibujo continuo
 function procesarMaster() {
-    // ---- MONITOR 1: PREVIEW (PREPARANDO) ----
-    // Dibuja la cámara de fondo
+    // Render de Monitor PREVIEW
     ctxPreview.drawImage(videoOculto, 0, 0, canvasPreview.width, canvasPreview.height);
-    // Superpone el banner que estés preparando
-    renderizarBannersEnCanvas(ctxPreview, canvasPreview, escenaPreview);
+    if (multimediaEscenas[escenaPreview]) {
+        ctxPreview.drawImage(multimediaEscenas[escenaPreview], 0, 0, canvasPreview.width, canvasPreview.height);
+    }
 
-    // ---- MONITOR 2: PROGRAM (EN VIVO) ----
-    // Dibuja la cámara de fondo
+    // Render de Monitor PROGRAM
     ctxLive.drawImage(videoOculto, 0, 0, canvasLive.width, canvasLive.height);
-    // Superpone el banner que ya esté al aire
-    renderizarBannersEnCanvas(ctxLive, canvasLive, escenaLive);
+    if (multimediaEscenas[escenaLive]) {
+        ctxLive.drawImage(multimediaEscenas[escenaLive], 0, 0, canvasLive.width, canvasLive.height);
+    }
 
-    // Repetir el loop en el siguiente cuadro
     requestAnimationFrame(procesarMaster);
 }
 
-// 8. Pintor de capas (Dibuja los PNGs si existen en la escena correspondiente)
-function renderizarBannersEnCanvas(contexto, canvasDestino, escena) {
-    // Si la escena requiere el Banner 1 y ya se seleccionó un archivo
-    if (escena === 'camara_banner_1' && banner1) {
-        // Ajusta las coordenadas (X, Y, Ancho, Alto) según el diseño de tu banner
-        contexto.drawImage(banner1, 0, 0, canvasDestino.width, canvasDestino.height);
-    } 
-    // Si la escena requiere el Banner 2 y ya se seleccionó un archivo
-    else if (escena === 'camara_banner_2' && banner2) {
-        contexto.drawImage(banner2, 0, 0, canvasDestino.width, canvasDestino.height);
-    }
-    // Puedes mapear aquí 'camara_banner_3' o 'camara_banner_4' para logos o textos flotantes
-}
-
-// Arrancar de inmediato al abrir la aplicación
 window.onload = iniciarCamara;
