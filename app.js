@@ -1,19 +1,19 @@
+// 1. Captura de elementos del HTML según la imagen
 const canvasPreview = document.getElementById('canvasPreview');
-const ctxPreview = canvasPreview.getContext('2d');
-
 const canvasLive = document.getElementById('canvasLive');
+const ctxPreview = canvasPreview.getContext('2d');
 const ctxLive = canvasLive.getContext('2d');
-
 const videoOculto = document.getElementById('videoOculto');
 
-// Estados independientes de escena
-let escenaPreview = 'camara_limpia';
-let escenaLive = 'camara_limpia';
+// 2. Variables de estado del switcher
+let escenaPreview = 'camara_limpia'; // Lo que se está preparando
+let escenaLive = 'camara_limpia';    // Lo que está saliendo al aire
 
-// Variables para guardar las imágenes que el usuario "suba" desde el dispositivo
+// Objetos para almacenar las imágenes de los banners cargados
 let banner1 = null;
 let banner2 = null;
 
+// 3. Inicializar la cámara trasera del celular
 async function iniciarCamara() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -26,81 +26,76 @@ async function iniciarCamara() {
         });
         videoOculto.srcObject = stream;
         videoOculto.onloadedmetadata = () => {
-            renderizarLoop();
+            // Arranca el bucle de renderizado en paralelo para ambos monitores
+            procesarMaster();
         };
     } catch (error) {
-        console.error("Error en la cámara: ", error);
+        console.error("Error al acceder a la cámara: ", error);
+        alert("Camara no disponible o faltan permisos.");
     }
 }
 
-// ESTA FUNCIÓN LEE EL ARCHIVO DEL CELULAR O PC (Como OBS)
+// 4. Función para cargar los banners dinámicamente desde los inputs de la imagen
 function cargarBanner(event, numeroBanner) {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
+    const file = event.target.files[0];
+    if (!file) return;
 
     const reader = new FileReader();
-    
-    // Cuando el dispositivo termine de leer el archivo...
     reader.onload = function(e) {
-        const nuevaImagen = new Image();
-        nuevaImagen.src = e.target.result; // Convierte el archivo en una ruta temporal (Base64)
-        
-        nuevaImagen.onload = function() {
+        const img = new Image();
+        img.onload = function() {
             if (numeroBanner === 1) {
-                banner1 = nuevaImagen;
+                banner1 = img;
             } else if (numeroBanner === 2) {
-                banner2 = nuevaImagen;
+                banner2 = img;
             }
-            alert(`Banner ${numeroBanner} cargado con éxito en memoria`);
         };
+        img.src = e.target.result;
     };
-    
-    reader.readAsDataURL(archivo);
+    reader.readAsDataURL(file);
 }
 
+// 5. Botones de escena (Cambian solo el PREVIEW verde)
 function cambiarPreview(nuevaEscena) {
     escenaPreview = nuevaEscena;
 }
 
+// 6. Botón GIGANTE AMARILLO (El corte "LIVE" que pasa Preview a Program)
 function pasarAEnVivo() {
     escenaLive = escenaPreview;
 }
 
-function renderizarLoop() {
-    // ---- 1. MONITOR PREVIEW ----
+// 7. El motor gráfico de la aplicación (Dibuja en ambos canvas al mismo tiempo)
+function procesarMaster() {
+    // ---- MONITOR 1: PREVIEW (PREPARANDO) ----
+    // Dibuja la cámara de fondo
     ctxPreview.drawImage(videoOculto, 0, 0, canvasPreview.width, canvasPreview.height);
-    if (escenaPreview === 'camara_banner_1' && banner1) {
-        dibujarBannerAdaptado(ctxPreview, canvasPreview, banner1);
-    } else if (escenaPreview === 'camara_banner_2' && banner2) {
-        dibujarBannerAdaptado(ctxPreview, canvasPreview, banner2);
-    }
+    // Superpone el banner que estés preparando
+    renderizarBannersEnCanvas(ctxPreview, canvasPreview, escenaPreview);
 
-    // ---- 2. MONITOR LIVE ----
+    // ---- MONITOR 2: PROGRAM (EN VIVO) ----
+    // Dibuja la cámara de fondo
     ctxLive.drawImage(videoOculto, 0, 0, canvasLive.width, canvasLive.height);
-    if (escenaLive === 'camara_banner_1' && banner1) {
-        dibujarBannerAdaptado(ctxLive, canvasLive, banner1);
-    } else if (escenaLive === 'camara_banner_2' && banner2) {
-        dibujarBannerAdaptado(ctxLive, canvasLive, banner2);
+    // Superpone el banner que ya esté al aire
+    renderizarBannersEnCanvas(ctxLive, canvasLive, escenaLive);
+
+    // Repetir el loop en el siguiente cuadro
+    requestAnimationFrame(procesarMaster);
+}
+
+// 8. Pintor de capas (Dibuja los PNGs si existen en la escena correspondiente)
+function renderizarBannersEnCanvas(contexto, canvasDestino, escena) {
+    // Si la escena requiere el Banner 1 y ya se seleccionó un archivo
+    if (escena === 'camara_banner_1' && banner1) {
+        // Ajusta las coordenadas (X, Y, Ancho, Alto) según el diseño de tu banner
+        contexto.drawImage(banner1, 0, 0, canvasDestino.width, canvasDestino.height);
+    } 
+    // Si la escena requiere el Banner 2 y ya se seleccionó un archivo
+    else if (escena === 'camara_banner_2' && banner2) {
+        contexto.drawImage(banner2, 0, 0, canvasDestino.width, canvasDestino.height);
     }
-
-    requestAnimationFrame(renderizarLoop);
+    // Puedes mapear aquí 'camara_banner_3' o 'camara_banner_4' para logos o textos flotantes
 }
 
-// NUEVA FUNCIÓN MAESTRA: Saca el cálculo de escala para que no se deforme
-function dibujarBannerAdaptado(contexto, canvasActual, imagenBanner) {
-    // 1. Queremos que el banner ocupe exactamente todo el ancho del lienzo (1280 px)
-    const anchoDeseado = canvasActual.width;
-    
-    // 2. Calculamos la altura proporcional (Regla de 3 basada en la imagen original)
-    const escala = anchoDeseado / imagenBanner.width;
-    const alturaProporcional = imagenBanner.height * escala;
-    
-    // 3. Lo posicionamos al ras de la parte inferior (Y = Altura total - Altura del banner)
-    const x = 0;
-    const y = canvasActual.height - alturaProporcional;
-    
-    // 4. Pintamos la imagen perfecta
-    contexto.drawImage(imagenBanner, x, y, anchoDeseado, alturaProporcional);
-}
-
+// Arrancar de inmediato al abrir la aplicación
 window.onload = iniciarCamara;
