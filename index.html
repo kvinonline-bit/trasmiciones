@@ -29,36 +29,52 @@
             </div>
         </div>
 
-        <div class="controls-container">
+<div class="controls-container">
     
-    <div class="banner-selectors">
-        <div class="selector-box">
-            <label for="uploadBanner">Multimedia de la Escena:</label>
-            <input type="file" id="uploadBanner" accept="image/png" onchange="cargarBannerEscena(event)">
+    <div class="banner-selectors" style="display: flex; gap: 6px; flex-wrap: wrap;">
+        
+        <div class="selector-box" style="flex: 1; min-width: 180px;">
+            <label style="font-size: 0.65rem; font-weight: bold;">PNG Capa:</label>
+            <input type="file" id="uploadBanner" accept="image/png" onchange="asignarBanner(event)">
         </div>
 
-        <div class="selector-box">
-            <label for="streamUrl">URL / Clave de Transmisión (Facebook):</label>
-            <input type="text" id="streamUrl" placeholder="rtmp://live-api-s.facebook.com:80/rtmp/..." style="background: rgba(0,0,0,0.2); border: 1px solid #444; color: #fff; padding: 2px 5px; border-radius: 4px;">
+        <div class="selector-box" style="flex: 1; min-width: 150px;">
+            <label style="font-size: 0.65rem; font-weight: bold;">Cámara:</label>
+            <select id="selectCamara" onchange="asignarCamaraHardware(this.value)" style="background: #212130; color: #fff; border: 1px solid #444; font-size: 0.65rem; border-radius: 4px; padding: 2px;">
+                <option value="local">Cámara Celular</option>
+                <option value="usb">Cámara USB / Capturadora</option>
+            </select>
+        </div>
+
+        <div class="selector-box" style="flex: 1.5; min-width: 220px;">
+            <label style="font-size: 0.65rem; font-weight: bold;">VDO.ninja ID:</label>
+            <div style="display: flex; gap: 4px; width: 65%;">
+                <input type="text" id="inputNinjaID" placeholder="Ej: SalaIglesia" style="background: rgba(0,0,0,0.2); border: 1px solid #444; color: #fff; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; flex: 1;">
+                <button onclick="asignarVdoNinja()" style="background: #28a745; color: white; border: none; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;">Vincular</button>
+            </div>
+        </div>
+
+        <div class="selector-box" style="flex: 2; min-width: 250px;">
+            <label style="font-size: 0.65rem; font-weight: bold;">Facebook Stream URL / Key:</label>
+            <input type="text" id="streamUrl" placeholder="rtmps://live-api-s.facebook.com..." style="background: rgba(0,0,0,0.2); border: 1px solid #444; color: #fff; padding: 2px 5px; border-radius: 4px; font-size: 0.65rem; width: 60%;">
         </div>
     </div>
 
     <div class="panel-distribucion">
-        
         <div class="bloque-escenas">
             <h4>Escenas de la Iglesia</h4>
             <div class="grid-calculadora">
-                <button onclick="cambiarPreview('camara_limpia')">E1: Cámara</button>
-                <button onclick="cambiarPreview('escena_2')">E2: Banner</button>
-                <button onclick="cambiarPreview('escena_3')">E3: Versículo</button>
-                <button onclick="cambiarPreview('escena_4')">E4: Anuncios</button>
-                <button onclick="cambiarPreview('escena_5')">E5: Despedida</button>
+                <button id="btn-camara_limpia" onclick="cambiarPreview('camara_limpia')" style="border-left: 3px solid #28a745;">E1: Cámara</button>
+                <button id="btn-escena_2" onclick="cambiarPreview('escena_2')">E2: Banner</button>
+                <button id="btn-escena_3" onclick="cambiarPreview('escena_3')">E3: Versículo</button>
+                <button id="btn-escena_4" onclick="cambiarPreview('escena_4')">E4: Anuncios</button>
+                <button id="btn-escena_5" onclick="cambiarPreview('escena_5')">E5: Despedida</button>
             </div>
         </div>
 
         <div class="bloque-emision" style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
             <h4 style="font-size: 0.65rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Control de Red</h4>
-            <button id="btnIniciarStream" onclick="conmutarTransmision()" style="flex: 1; background: linear-gradient(135deg, #dc3545, #a71d2a); color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <button id="btnIniciarStream" onclick="conmutarTransmision()" style="flex: 1; background: linear-gradient(135deg, #dc3545, #a71d2a); color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; gap: 5px;">
                 <span id="iconoStream">🔴</span> <span id="textoStream">INICIAR EN VIVO</span>
             </button>
         </div>
@@ -70,9 +86,9 @@
                 <span>▲</span>
             </button>
         </div>
-
     </div>
 </div>
+
     <video id="videoOculto" autoplay playsinline muted style="display:none;"></video>
 
     <script src="app.js"></script>
