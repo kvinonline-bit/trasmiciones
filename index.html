@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stream Studio Pro PWA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('Service Worker Activo'))
+          .catch(err => console.log('Error de SW', err));
+      }
+    </script>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="monitor-container">
+            <div class="monitor-box">
+                <span class="monitor-label preview-label">PREVIEW (PREPARANDO)</span>
+                <canvas id="canvasPreview" width="1280" height="720"></canvas>
+            </div>
+            <div class="monitor-box">
+                <span class="monitor-label live-label">PROGRAM (EN VIVO)</span>
+                <canvas id="canvasLive" width="1280" height="720"></canvas>
+            </div>
+        </div>
+
+        <div class="transition-container">
+            <button id="btnTransicion" onclick="pasarAEnVivo()">▲ TRANSICIÓN (IR A LIVE) ▲</button>
+        </div>
+
+        <div class="controls-container">
+            <h3>Seleccionar Escena para Preview</h3>
+            <div class="button-group">
+                <button onclick="cambiarPreview('camara_limpia')">Escena 1: Solo Cámara</button>
+                <button onclick="cambiarPreview('camara_banner_1')">Escena 2: Banner 1</button>
+                <button onclick="cambiarPreview('camara_banner_2')">Escena 3: Banner 2</button>
+            </div>
+        </div>
+    </div>
+
+    <video id="videoOculto" autoplay playsinline muted style="display:none;"></video>
+
+    <script src="app.js"></script>
+</body>
+</html>

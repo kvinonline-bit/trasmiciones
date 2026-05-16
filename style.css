@@ -1,0 +1,137 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Contenedor de monitores dobles */
+.monitor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row; /* Uno al lado del otro */
+    gap: 15px;
+    background-color: #050505;
+    padding: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 600px) {
+    .monitor-container {
+        flex-direction: column; /* Si el cel está vertical, uno arriba del otro */
+    }
+}
+
+.monitor-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-width: 50%;
+}
+
+@media (max-width: 600px) {
+    .monitor-box {
+        max-width: 100%;
+    }
+}
+
+/* Etiquetas de Preview y Live */
+.monitor-label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px 4px 0 0;
+    letter-spacing: 1px;
+    width: fit-content;
+}
+
+.preview-label { background-color: #28a745; color: white; }
+.live-label { background-color: #dc3545; color: white; }
+
+canvas {
+    width: 100%;
+    height: auto;
+    border: 2px solid #333;
+    background-color: #1a1a1a;
+    border-radius: 0 4px 4px 4px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Barra de Transición */
+.transition-container {
+    padding: 10px 15px;
+    background-color: #161616;
+    text-align: center;
+}
+
+#btnTransicion {
+    background-color: #ffc107;
+    color: #121212;
+    border: none;
+    font-weight: bold;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+    transition: background-color 0.2s;
+}
+
+#btnTransicion:active {
+    background-color: #ba8b00;
+}
+
+/* Controles Inferiores */
+.controls-container {
+    background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+    padding: 20px;
+    border-top: 1px solid #4a4a4a;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+}
+
+.controls-container h3 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: #e0e0e0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.button-group button {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.button-group button:active {
+    background-color: rgba(40, 167, 69, 0.4);
+    border-color: #28a745;
+}
