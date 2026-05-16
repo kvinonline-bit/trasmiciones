@@ -32,12 +32,25 @@
             <button id="btnTransicion" onclick="pasarAEnVivo()">▲ TRANSICIÓN (IR A LIVE) ▲</button>
         </div>
 
-        <div class="controls-container">
-            <h3>Seleccionar Escena para Preview</h3>
+<div class="controls-container">
+            <h3>Configurar Banners</h3>
+            
+            <div class="banner-selectors">
+                <div class="selector-box">
+                    <label for="uploadBanner1">Cargar Banner 1 (PNG):</label>
+                    <input type="file" id="uploadBanner1" accept="image/png" onchange="cargarBanner(event, 1)">
+                </div>
+                <div class="selector-box">
+                    <label for="uploadBanner2">Cargar Banner 2 (PNG):</label>
+                    <input type="file" id="uploadBanner2" accept="image/png" onchange="cargarBanner(event, 2)">
+                </div>
+            </div>
+
+            <h3 style="margin-top: 15px;">Cambiar Escena en Preview</h3>
             <div class="button-group">
                 <button onclick="cambiarPreview('camara_limpia')">Escena 1: Solo Cámara</button>
-                <button onclick="cambiarPreview('camara_banner_1')">Escena 2: Banner 1</button>
-                <button onclick="cambiarPreview('camara_banner_2')">Escena 3: Banner 2</button>
+                <button onclick="cambiarPreview('camara_banner_1')">Escena 2: Con Banner 1</button>
+                <button onclick="cambiarPreview('camara_banner_2')">Escena 3: Con Banner 2</button>
             </div>
         </div>
     </div>
