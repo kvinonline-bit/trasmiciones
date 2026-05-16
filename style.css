@@ -1,82 +1,73 @@
-* {
-    box-sizing: border-box;
+/* Reseteo global para emular App Nativa */
+html, body {
     margin: 0;
     padding: 0;
-}
-
-body {
-    background-color: #121212;
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden; /* Bloquea el scroll por completo */
+    width: 100%;
     height: 100vh;
-    width: 100vw;
+    overflow: hidden; /* Elimina cualquier intento de scroll */
+    background-color: #0b0b0e;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
 }
 
+/* Contenedor general */
 .app-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100vw;
     justify-content: space-between;
 }
 
-/* --- CONTENEDOR DE MONITORES (Corregido para Celular) --- */
+/* CONTENEDOR DE MONITORES (Distribución Horizontal) */
 .monitor-container {
-    flex: 0 0 auto; /* Evita que esta zona crezca de más hacia abajo */
     display: flex;
-    flex-direction: row; /* ¡Fuerza el lado a lado SIEMPRE! */
-    gap: 8px;
-    background-color: #050505;
-    padding: 8px;
-    height: auto;
+    flex-direction: row; /* Fuerza el lado a lado */
+    gap: 6px;
+    padding: 6px;
+    background-color: #121216;
+    flex: 0 0 auto; /* Evita que crezca verticalmente */
 }
 
-/* BORRAMOS LA MEDIA QUERY QUE VOLVÍA TODO COLUMNA */
-
 .monitor-box {
-    flex: 1; /* Divide la pantalla en 50% y 50% exactos */
+    flex: 1; /* Mitad de pantalla exacta para cada monitor */
     display: flex;
     flex-direction: column;
-    min-width: 0; /* Evita que el canvas rompa el contenedor */
 }
 
 .monitor-label {
     font-size: 0.65rem;
+    padding: 3px 6px;
     font-weight: bold;
-    padding: 2px 6px;
+    text-align: center;
     border-radius: 4px 4px 0 0;
-    letter-spacing: 1px;
-    width: fit-content;
-    text-transform: uppercase;
+    color: #ffffff;
 }
 
-.preview-label { background-color: #28a745; color: white; }
-.live-label { background-color: #dc3545; color: white; }
+.preview-label { background-color: #28a745; }
+.live-label { background-color: #dc3545; }
 
-canvas {
-    width: 100%; /* Se adapta al 50% del ancho asignado */
+/* El canvas mantendrá proporción 16:9 de forma responsiva */
+.monitor-box canvas {
+    width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9; /* Mantiene la proporción de video perfecta */
-    object-fit: contain;
-    border: 1.5px solid #333;
-    background-color: #1a1a1a;
-    border-radius: 0 4px 4px 4px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    aspect-ratio: 16 / 9;
+    background-color: #000000;
+    border: 1px solid #252532;
+    border-radius: 0 0 4px 4px;
 }
 
-/* --- CONTROLES INFERIORES (Ajustados al espacio restante) --- */
+/* PANEL DE CONTROL INFERIOR */
 .controls-container {
-    background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+    background: linear-gradient(180deg, #161622 0%, #0d0d14 100%);
     padding: 10px;
-    border-top: 1px solid #4a4a4a;
-    border-radius: 12px 12px 0 0;
-    flex: 1; /* Absorbe TODO el espacio que sobra abajo en el celular */
+    border-top: 1px solid #232335;
+    flex: 1; /* Ocupa todo el espacio restante abajo en la pantalla */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Distribuye selectores arriba y botones abajo */
+    justify-content: space-between; /* Ajusta los elementos al espacio disponible */
 }
 
+/* Selectores de Banners compactados en una sola fila */
 .banner-selectors {
     display: flex;
     gap: 8px;
@@ -85,104 +76,83 @@ canvas {
 
 .selector-box {
     flex: 1;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid #232335;
     border-radius: 6px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #a2a2c2;
+}
+
+.selector-box input[type="file"] {
+    max-width: 60%;
     font-size: 0.7rem;
-    text-align: left;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.selector-box label {
-    display: block;
-    color: #aaa;
-    margin-bottom: 2px;
-}
-
-.selector-box input {
-    width: 100%;
-    color: #ccc;
-    font-size: 0.65rem;
-}
-
-/* --- NUEVA DISTRIBUCIÓN LADO A LADO --- */
+/* Distribución del Panel de Control */
 .panel-distribucion {
     display: flex;
     gap: 10px;
+    flex: 1;
     align-items: stretch;
-    flex: 1; /* Hace que los botones utilicen el alto disponible */
-    min-height: 0;
 }
 
-/* Bloque Izquierdo: Escenas */
+/* Bloque de Escenas (Ocupa el 65% de la anchura) */
 .bloque-escenas {
-    flex: 2.2; /* Le da más terreno a los botones de escena */
+    flex: 2;
     display: flex;
     flex-direction: column;
 }
 
-.bloque-escenas h4 {
-    font-size: 0.65rem;
-    color: #aaa;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-    letter-spacing: 1px;
-}
-
-/* Cuadrícula tipo calculadora */
 .grid-calculadora {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de botones */
     gap: 6px;
-    flex: 1;
+    height: 100%;
 }
 
 .grid-calculadora button {
-    background-color: rgba(255, 255, 255, 0.06);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: #212130;
+    color: #a2a2c2;
+    border: 1px solid #323249;
+    border-radius: 6px;
     font-size: 0.75rem;
     font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.1s ease;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 8px 4px;
+    transition: background 0.1s;
 }
 
 .grid-calculadora button:active {
-    background-color: rgba(40, 167, 69, 0.4);
-    border-color: #28a745;
+    background-color: #323249;
+    color: #ffffff;
 }
 
-/* Bloque Derecho: Botón LIVE */
+/* Bloque del botón de acción LIVE (Ocupa el 35% restante) */
 .bloque-transicion {
-    flex: 1; 
+    flex: 1;
     display: flex;
 }
 
 #btnTransicionVertical {
-    background: linear-gradient(135deg, #ffc107, #ff9800);
-    color: #121212;
-    border: none;
-    font-weight: 900;
-    font-size: 0.95rem;
-    border-radius: 8px;
     width: 100%;
+    background: linear-gradient(135deg, #ffb800 0%, #e0a200 100%);
+    color: #050508;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.95rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 1px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+    justify-content: center;
+    gap: 2px;
+    box-shadow: 0 4px 10px rgba(255, 184, 0, 0.2);
 }
 
 #btnTransicionVertical:active {
-    background: #e68a00;
-    transform: scale(0.96);
+    background: #c89100;
+    transform: scale(0.98);
 }
