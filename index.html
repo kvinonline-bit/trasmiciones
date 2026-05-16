@@ -33,27 +33,41 @@
         </div>
 
 <div class="controls-container">
-            <h3>Configurar Banners</h3>
             
             <div class="banner-selectors">
                 <div class="selector-box">
-                    <label for="uploadBanner1">Cargar Banner 1 (PNG):</label>
+                    <label for="uploadBanner1">Cargar Banner 1:</label>
                     <input type="file" id="uploadBanner1" accept="image/png" onchange="cargarBanner(event, 1)">
                 </div>
                 <div class="selector-box">
-                    <label for="uploadBanner2">Cargar Banner 2 (PNG):</label>
+                    <label for="uploadBanner2">Cargar Banner 2:</label>
                     <input type="file" id="uploadBanner2" accept="image/png" onchange="cargarBanner(event, 2)">
                 </div>
             </div>
 
-            <h3 style="margin-top: 15px;">Cambiar Escena en Preview</h3>
-            <div class="button-group">
-                <button onclick="cambiarPreview('camara_limpia')">Escena 1: Solo Cámara</button>
-                <button onclick="cambiarPreview('camara_banner_1')">Escena 2: Con Banner 1</button>
-                <button onclick="cambiarPreview('camara_banner_2')">Escena 3: Con Banner 2</button>
+            <div class="panel-distribucion">
+                
+                <div class="bloque-escenas">
+                    <h4>Escenas Preview</h4>
+                    <div class="grid-calculadora">
+                        <button onclick="cambiarPreview('camara_limpia')">E1: Limpia</button>
+                        <button onclick="cambiarPreview('camara_banner_1')">E2: Ban 1</button>
+                        <button onclick="cambiarPreview('camara_banner_2')">E3: Ban 2</button>
+                        <button onclick="cambiarPreview('camara_banner_3')">E4: Vacío</button>
+                        <button onclick="cambiarPreview('camara_banner_4')">E5: Vacío</button>
+                    </div>
+                </div>
+
+                <div class="bloque-transicion">
+                    <button id="btnTransicionVertical" onclick="pasarAEnVivo()">
+                        <span>▲</span>
+                        <span>LIVE</span>
+                        <span>▲</span>
+                    </button>
+                </div>
+
             </div>
         </div>
-    </div>
 
     <video id="videoOculto" autoplay playsinline muted style="display:none;"></video>
 
